@@ -3,15 +3,20 @@ package com.devsuperior.dscommerce.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.devsuperior.dscommerce.dto.ProductDTO;
 import com.devsuperior.dscommerce.entities.Product;
 import com.devsuperior.dscommerce.repositories.ProductRepository;
+import com.devsuperior.dscommerce.services.exceptions.DataBaseException;
 import com.devsuperior.dscommerce.services.exceptions.ResourceNotFoundException;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class ProductService {
@@ -42,16 +47,28 @@ public class ProductService {
 	}
 	
 	@Transactional
-	public ProductDTO update(Long id, ProductDTO dto) {		
-		Product entity = repostory.getReferenceById(id); //getReferenceById(id) --> não busca no banco, trabalha com os dados monitorados
-		copyDTOToEntoty(dto, entity);		
-		entity = repostory.save(entity); //salva a variavel entity no banco utiliando o repository e ao mesmo tempo retorna		
-		return new ProductDTO(entity);
+	public ProductDTO update(Long id, ProductDTO dto) {	
+		try {
+			Product entity = repostory.getReferenceById(id); //getReferenceById(id) --> não busca no banco, trabalha com os dados monitorados
+			copyDTOToEntoty(dto, entity);		
+			entity = repostory.save(entity); //salva a variavel entity no banco utiliando o repository e ao mesmo tempo retorna		
+			return new ProductDTO(entity);
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException("Recuso não encontrado");
+		}
 	}
 	
-	@Transactional
+	@Transactional(propagation = Propagation.SUPPORTS) //só executa se o metodo estiver no contexto de outra transação
 	public void delete(Long id) {
-		repostory.deleteById(id);			
+		if(!repostory.existsById(id)) {
+			throw new ResourceNotFoundException("Recuso não encontrado");
+		}
+		
+		try {
+			repostory.deleteById(id);
+		} catch (DataIntegrityViolationException e) {
+			 throw new DataBaseException("Falha de integridade referencial");
+		}
 	}
 
 	private void copyDTOToEntoty(ProductDTO dto, Product entity) {

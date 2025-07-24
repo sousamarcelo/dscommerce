@@ -10,6 +10,9 @@ public class ProductDTO {
 	private Double price;
 	private String imgUrl;
 	
+	public ProductDTO() {
+	}
+	
 	//como só existe os metodos gets é interessante manter somente o contrutor com argumentos
 	public ProductDTO(Product product) {
 		id = product.getId();
