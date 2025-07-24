@@ -47,11 +47,16 @@ public class ProductService {
 		entity = repostory.save(entity); //salva a variavel entity no banco utiliando o repository e ao mesmo tempo retorna		
 		return new ProductDTO(entity);
 	}
+	
+	@Transactional
+	public void delete(Long id) {
+		repostory.deleteById(id);			
+	}
 
 	private void copyDTOToEntoty(ProductDTO dto, Product entity) {
 		entity.setName(dto.getName());
 		entity.setDescription(dto.getDescription());
 		entity.setPrice(dto.getPrice());
 		entity.setImgUrl(dto.getImgUrl());		
-	}
+	}	
 }
