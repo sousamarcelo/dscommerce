@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.devsuperior.dscommerce.dto.ProductDTO;
 import com.devsuperior.dscommerce.entities.Product;
 import com.devsuperior.dscommerce.repositories.ProductRepository;
+import com.devsuperior.dscommerce.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class ProductService {
@@ -18,12 +19,12 @@ public class ProductService {
 	@Autowired
 	private ProductRepository repostory;
 	
-	@Transactional(readOnly = true)
+	@Transactional(readOnly = true)	
 	public ProductDTO findById(Long id) {
 		Optional<Product> result  = repostory.findById(id);
-		Product product = result.get();
+		Product product = result.orElseThrow(() -> new ResourceNotFoundException("Recuros não encontrado")); //"orElseThrow()" --> o result que é um tipo Optional já tem um exceção, não necessita de try/catch
 		ProductDTO dto = new ProductDTO(product);
-		return dto;		
+		return dto;	
 	}
 	
 	@Transactional(readOnly = true)
