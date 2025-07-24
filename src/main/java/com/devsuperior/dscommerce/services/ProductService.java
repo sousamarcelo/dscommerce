@@ -33,16 +33,25 @@ public class ProductService {
 	}
 	
 	@Transactional
-	public ProductDTO insert(ProductDTO dto) {  
-		
+	public ProductDTO insert(ProductDTO dto) {  		
 		Product entity = new Product();
+		copyDTOToEntoty(dto, entity);		
+		entity = repostory.save(entity); //salva a variavel entity no banco utiliando o repository e ao mesmo tempo retorna		
+		return new ProductDTO(entity);
+	}
+	
+	@Transactional
+	public ProductDTO update(Long id, ProductDTO dto) {		
+		Product entity = repostory.getReferenceById(id); //getReferenceById(id) --> não busca no banco, trabalha com os dados monitorados
+		copyDTOToEntoty(dto, entity);		
+		entity = repostory.save(entity); //salva a variavel entity no banco utiliando o repository e ao mesmo tempo retorna		
+		return new ProductDTO(entity);
+	}
+
+	private void copyDTOToEntoty(ProductDTO dto, Product entity) {
 		entity.setName(dto.getName());
 		entity.setDescription(dto.getDescription());
 		entity.setPrice(dto.getPrice());
-		entity.setImgUrl(dto.getImgUrl());
-		
-		entity = repostory.save(entity); //salva a variavel entity no banco utiliando o repository e ao mesmo tempo retorna
-		
-		return new ProductDTO(entity);
+		entity.setImgUrl(dto.getImgUrl());		
 	}
 }
