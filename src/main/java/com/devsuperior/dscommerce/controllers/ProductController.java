@@ -19,6 +19,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.devsuperior.dscommerce.dto.ProductDTO;
 import com.devsuperior.dscommerce.services.ProductService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping(value = "/products")
 public class ProductController {
@@ -39,14 +41,14 @@ public class ProductController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<ProductDTO> insert(@RequestBody ProductDTO dto) { //@RequestBody --> instancia um dto com as informações do bory da requisição
+	public ResponseEntity<ProductDTO> insert(@Valid @RequestBody ProductDTO dto) { //@RequestBody --> instancia um dto com as informações do bory da requisição // o "Valid" é para considerar as validações do BinValidation inseridas no dto do produto 
 		dto = service.insert(dto);	
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO dto) {
+	public ResponseEntity<ProductDTO> update(@PathVariable Long id, @Valid @RequestBody ProductDTO dto) { //o "Valid" é para considerar as validações do BinValidation inseridas no dto do produto 
 		dto = service.update(id, dto);
 		return ResponseEntity.ok(dto);
 	}
