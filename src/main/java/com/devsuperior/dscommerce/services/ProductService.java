@@ -33,8 +33,8 @@ public class ProductService {
 	}
 	
 	@Transactional(readOnly = true)
-	public Page<ProductDTO> findAll(Pageable pageable) {  //Pageable--> paginação
-		Page<Product> result  = repostory.findAll(pageable); //		
+	public Page<ProductDTO> findAll(String name, Pageable pageable) {  //Pageable--> paginação
+		Page<Product> result  = repostory.searchByName(name, pageable); //		
 		return 	result.map(x -> new ProductDTO(x)); // para o Page não precisa de stream, chamar o map diretamente	
 	}
 	
