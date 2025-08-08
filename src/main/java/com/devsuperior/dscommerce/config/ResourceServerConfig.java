@@ -26,10 +26,9 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class ResourceServerConfig {
-	//são atributos de configurações do arquivo .properts
-	
+
 	@Value("${cors.origins}")
-	private String corsOrigins;  //recursos do navegador que defino quais hosts podem acessar o back end da aplicação, no arquivo .properts
+	private String corsOrigins;
 
 	@Bean
 	@Profile("test")
@@ -44,7 +43,6 @@ public class ResourceServerConfig {
 	@Bean
 	@Order(3)
 	public SecurityFilterChain rsSecurityFilterChain(HttpSecurity http) throws Exception {
-
 		http.csrf(csrf -> csrf.disable());
 		http.authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
@@ -80,7 +78,7 @@ public class ResourceServerConfig {
 	}
 
 	@Bean
-	FilterRegistrationBean<CorsFilter> corsFilter() {
+	FilterRegistrationBean<CorsFilter> filterRegistrationBeanCorsFilter() {
 		FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(
 				new CorsFilter(corsConfigurationSource()));
 		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
