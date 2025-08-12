@@ -34,11 +34,17 @@ public class OrderService {
 	@Autowired
 	private OrderItemRepository orderItemRepository;
 	
+	@Autowired
+	AuthService authService;
+	
 	
 	@Transactional(readOnly = true)	
 	public OrderDTO findById(Long id) {
 		Optional<Order> result  = repository.findById(id);
 		Order order = result.orElseThrow(() -> new ResourceNotFoundException("Recuros não encontrado")); //"orElseThrow()" --> o result que é um tipo Optional já tem um exceção, não necessita de try/catch
+		
+		authService.validateSelfOrAdmin(order.getClient().getId()); //verificar se o usuario logado é o dono do pedido ou é um admin para ter acesso
+		
 		OrderDTO dto = new OrderDTO(order);
 		return dto;	
 	}

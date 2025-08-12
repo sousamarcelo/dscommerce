@@ -124,7 +124,7 @@ public class User implements UserDetails {
 			}
 		}
 		return false;
-	}
+	}	
 
 	@Override
 	public int hashCode() {
