@@ -40,6 +40,7 @@ public class ControllerExceptionHandler {
 		HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
 		ValidationError err = new ValidationError(Instant.now(), status.value(), "Dados inválidos", request.getRequestURI());		
 		
+		//buscando a lista de errors retornada pelo framework e adicionarndo a lista personalizada
 		for(FieldError f : e.getBindingResult().getFieldErrors()) {
 			err.addError(f.getField(), f.getDefaultMessage());
 		}		
